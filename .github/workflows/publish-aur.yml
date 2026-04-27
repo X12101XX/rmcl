@@ -55,6 +55,7 @@ jobs:
       - name: prepare mcl-launcher-bin
         run: |
           sed -i "s|^pkgver=.*|pkgver=${{ steps.version.outputs.version }}|" pkg/mcl-launcher-bin/PKGBUILD
+          sed -i "s|^pkgrel=.*|pkgrel=1|" pkg/mcl-launcher-bin/PKGBUILD
           cp pkg/mcl-launcher-bin/PKGBUILD PKGBUILD
           rm -f .SRCINFO
 

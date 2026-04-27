@@ -1,7 +1,7 @@
 # Maintainer: objz <me@objz.dev>
 pkgname=mcl-launcher-bin
 pkgver=0.2.0
-pkgrel=1
+pkgrel=2
 pkgdesc="Minecraft launcher TUI"
 arch=('x86_64' 'aarch64')
 url="https://github.com/objz/mcl"

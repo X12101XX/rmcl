@@ -60,10 +60,32 @@ jobs:
         shell: bash
         run: |
           package="target/chocolatey/out/mcl-launcher.${{ steps.package.outputs.version }}.nupkg"
+          saw_server_error=false
 
           for attempt in 1 2 3; do
-            if docker run --rm --workdir /wksp --volume "$PWD:/wksp" ghcr.io/crazy-max/chocolatey push "$package" --source "https://push.chocolatey.org/" --api-key "$CHOCOLATEY_API_KEY" --timeout 2700; then
+            log_file="$RUNNER_TEMP/chocolatey-push-${attempt}.log"
+
+            if docker run --rm --workdir /wksp --volume "$PWD:/wksp" ghcr.io/crazy-max/chocolatey push "$package" --source "https://push.chocolatey.org/" --api-key "$CHOCOLATEY_API_KEY" --timeout 2700 2>&1 | tee "$log_file"; then
               exit 0
+            fi
+
+            if grep -q "409 (Conflict)" "$log_file"; then
+              echo "::warning::Chocolatey package version already exists; treating this publish as complete."
+              exit 0
+            fi
+
+            if grep -qE "50[0-9] \\(" "$log_file"; then
+              saw_server_error=true
+            fi
+
+            if grep -q "403 (Forbidden)" "$log_file"; then
+              if [ "$saw_server_error" = "true" ]; then
+                echo "::warning::Chocolatey returned 403 after an earlier server error. The previous push may have been accepted and put into moderation; treating this publish as complete."
+                exit 0
+              fi
+
+              echo "::error::Chocolatey rejected the push with 403 before any server-side failure. Check CHOCOLATEY_API_KEY ownership/permissions for mcl-launcher."
+              exit 1
             fi
 
             if [ "$attempt" -eq 3 ]; then
