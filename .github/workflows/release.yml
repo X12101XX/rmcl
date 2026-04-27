@@ -288,6 +288,7 @@ jobs:
           RELEASE_COMMIT: "${{ github.sha }}"
           CHANGELOG: "${{ steps.changelog.outputs.content }}"
           RELEASE_TAG: "${{ needs.plan.outputs.tag }}"
+          APP_VERSION: "${{ fromJson(steps.host.outputs.manifest).releases[0].app_version }}"
         run: |
           echo "$CHANGELOG" > $RUNNER_TEMP/notes.txt
           cat >> $RUNNER_TEMP/notes.txt <<EOF
@@ -320,6 +321,8 @@ jobs:
           \`\`\`
           winget install Objz.MclLauncher
           \`\`\`
+
+          The generated WinGet manifest is attached as \`winget-manifest-${APP_VERSION}.zip\` for local validation.
 
           ## Chocolatey
 
@@ -431,7 +434,7 @@ jobs:
     secrets: inherit
     # publish jobs get escalated permissions
     permissions:
-      "contents": "read"
+      "contents": "write"
 
   custom-publish-chocolatey:
     needs:

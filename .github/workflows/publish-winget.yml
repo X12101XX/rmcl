@@ -8,7 +8,7 @@ on:
         type: string
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   publish:
@@ -26,6 +26,7 @@ jobs:
           $version = $plan.releases[0].app_version
           $identifier = 'Objz.MclLauncher'
           $packagePath = "manifests/o/Objz/MclLauncher/$version"
+          $assetPath = "winget-manifest-$version.zip"
           $installerFile = 'mcl-launcher-x86_64-pc-windows-msvc.msi'
           $checksumFile = "$installerFile.sha256"
           $installerUrl = "https://github.com/objz/mcl/releases/download/$tag/$installerFile"
@@ -94,8 +95,19 @@ jobs:
           $localeManifest | Set-Content -Path "$packagePath/$identifier.locale.en-US.yaml" -Encoding utf8
 
           Remove-Item "$packagePath/$checksumFile"
+          Compress-Archive -Path manifests -DestinationPath $assetPath -Force
 
           "path=$packagePath" >> $env:GITHUB_OUTPUT
+          "asset=$assetPath" >> $env:GITHUB_OUTPUT
+
+      - name: upload WinGet manifest to GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PLAN: ${{ inputs.plan }}
+        run: |
+          $plan = $env:PLAN | ConvertFrom-Json
+          gh release upload "$($plan.announcement_tag)" "${{ steps.manifest.outputs.asset }}" --clobber
 
       - name: submit WinGet manifest
         shell: pwsh
