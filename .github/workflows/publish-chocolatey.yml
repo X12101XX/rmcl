@@ -16,11 +16,20 @@ jobs:
     env:
       PLAN: ${{ inputs.plan }}
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}
 
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ fromJson(inputs.plan).announcement_tag }}
+
+      - name: verify Chocolatey publishing secret
+        shell: bash
+        run: |
+          if [ -z "${CHOCOLATEY_API_KEY}" ]; then
+            echo "::error::CHOCOLATEY_API_KEY is required to publish mcl-launcher to Chocolatey."
+            exit 1
+          fi
 
       - name: prepare Chocolatey package
         id: package
@@ -50,4 +59,4 @@ jobs:
       - name: push Chocolatey package
         uses: crazy-max/ghaction-chocolatey@v4
         with:
-          args: push target/chocolatey/out/mcl-launcher.${{ steps.package.outputs.version }}.nupkg --source "https://push.chocolatey.org/" --api-key "${{ secrets.CHOCOLATEY_API_KEY }}"
+          args: push target/chocolatey/out/mcl-launcher.${{ steps.package.outputs.version }}.nupkg --source "https://push.chocolatey.org/" --api-key "${{ secrets.CHOCOLATEY_API_KEY }}" --timeout 2700

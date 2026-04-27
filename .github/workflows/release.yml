@@ -107,7 +107,7 @@ jobs:
       # Typically there will be:
       # - 1 "global" task that builds universal installers
       # - N "local" tasks that build each platform's binaries and platform-specific installers
-      matrix: ${{ fromJson(needs.plan.outputs.val).ci.github.artifacts_matrix }}
+      matrix: ${{ fromJson(needs.plan.outputs.val || '{"ci":{"github":{"artifacts_matrix":{"include":[]}}}}').ci.github.artifacts_matrix }}
     runs-on: ${{ matrix.runner }}
     container: ${{ matrix.container && matrix.container.image || null }}
     env:
@@ -272,8 +272,8 @@ jobs:
           merge-multiple: true
       - name: Cleanup
         run: |
-          # Remove the granular manifests
-          rm -f artifacts/*-dist-manifest.json
+          # Remove internal cargo-dist manifests from the public GitHub Release.
+          rm -f artifacts/*-dist-manifest.json artifacts/dist-manifest.json
       - name: Generate changelog
         id: changelog
         uses: orhun/git-cliff-action@v4
@@ -287,8 +287,32 @@ jobs:
           ANNOUNCEMENT_TITLE: "${{ fromJson(steps.host.outputs.manifest).announcement_title }}"
           RELEASE_COMMIT: "${{ github.sha }}"
           CHANGELOG: "${{ steps.changelog.outputs.content }}"
+          RELEASE_TAG: "${{ needs.plan.outputs.tag }}"
         run: |
           echo "$CHANGELOG" > $RUNNER_TEMP/notes.txt
+          cat >> $RUNNER_TEMP/notes.txt <<EOF
+
+          ## Downloads
+
+          | File | Platform | Checksum |
+          | --- | --- | --- |
+          | [mcl-launcher-aarch64-apple-darwin.tar.xz](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-aarch64-apple-darwin.tar.xz) | Apple Silicon macOS | [checksum](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-aarch64-apple-darwin.tar.xz.sha256) |
+          | [mcl-launcher-x86_64-apple-darwin.tar.xz](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-apple-darwin.tar.xz) | Intel macOS | [checksum](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-apple-darwin.tar.xz.sha256) |
+          | [mcl-launcher-x86_64-pc-windows-msvc.zip](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-pc-windows-msvc.zip) | x64 Windows | [checksum](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-pc-windows-msvc.zip.sha256) |
+          | [mcl-launcher-x86_64-pc-windows-msvc.msi](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-pc-windows-msvc.msi) | x64 Windows | [checksum](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-pc-windows-msvc.msi.sha256) |
+          | [mcl-launcher-aarch64-unknown-linux-gnu.tar.xz](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-aarch64-unknown-linux-gnu.tar.xz) | ARM64 Linux | [checksum](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-aarch64-unknown-linux-gnu.tar.xz.sha256) |
+          | [mcl-launcher-x86_64-unknown-linux-gnu.tar.xz](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-unknown-linux-gnu.tar.xz) | x64 Linux | [checksum](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-unknown-linux-gnu.tar.xz.sha256) |
+
+          ## Package Managers
+
+          \`\`\`sh
+          cargo install mcl-launcher
+          brew install objz/tap/mcl-launcher
+          winget install Objz.MclLauncher
+          choco install mcl-launcher
+          paru -S mcl-launcher-bin
+          \`\`\`
+          EOF
 
           gh release create "${{ needs.plan.outputs.tag }}" --target "$RELEASE_COMMIT" $PRERELEASE_FLAG --title "$ANNOUNCEMENT_TITLE" --notes-file "$RUNNER_TEMP/notes.txt" artifacts/*
 
@@ -300,14 +324,29 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PLAN: ${{ needs.plan.outputs.val }}
+      HOMEBREW_TAP_REPOSITORY: "objz/homebrew-tap"
       GITHUB_USER: "axo bot"
       GITHUB_EMAIL: "admin+bot@axo.dev"
     if: ${{ !fromJson(needs.plan.outputs.val).announcement_is_prerelease || fromJson(needs.plan.outputs.val).publish_prereleases }}
     steps:
+      - name: Verify Homebrew tap access
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::error::RELEASE_TOKEN is required to publish Homebrew formulae to ${HOMEBREW_TAP_REPOSITORY}."
+            exit 1
+          fi
+
+          if ! gh repo view "${HOMEBREW_TAP_REPOSITORY}" >/dev/null; then
+            echo "::error::RELEASE_TOKEN cannot access ${HOMEBREW_TAP_REPOSITORY}. Create the tap repository or update RELEASE_TOKEN with access to it."
+            exit 1
+          fi
+
       - uses: actions/checkout@v6
         with:
           persist-credentials: true
-          repository: "objz/homebrew-tap"
+          repository: ${{ env.HOMEBREW_TAP_REPOSITORY }}
           token: ${{ secrets.RELEASE_TOKEN }}
       # So we have access to the formula
       - name: Fetch homebrew formulae
@@ -322,6 +361,7 @@ jobs:
         run: |
           git config --global user.name "${GITHUB_USER}"
           git config --global user.email "${GITHUB_EMAIL}"
+          starting_commit="$(git rev-parse HEAD)"
 
           for release in $(echo "$PLAN" | jq --compact-output '.releases[] | select([.artifacts[] | endswith(".rb")] | any)'); do
             filename=$(echo "$release" | jq '.artifacts[] | select(endswith(".rb"))' --raw-output)
@@ -334,9 +374,18 @@ jobs:
             brew style --except-cops FormulaAudit/Homepage,FormulaAudit/Desc,FormulaAuditStrict --fix "Formula/${filename}" || true
 
             git add "Formula/${filename}"
-            git commit -m "${name} ${version}"
+            if git diff --cached --quiet; then
+              echo "Formula/${filename} is unchanged"
+            else
+              git commit -m "${name} ${version}"
+            fi
           done
-          git push
+
+          if [ "$(git rev-parse HEAD)" = "$starting_commit" ]; then
+            echo "No Homebrew formula changes to push"
+          else
+            git push
+          fi
 
   custom-publish-crates:
     needs:
@@ -346,6 +395,7 @@ jobs:
     uses: ./.github/workflows/publish-crates.yml
     with:
       plan: ${{ needs.plan.outputs.val }}
+      dry_run: false
     secrets: inherit
     # publish jobs get escalated permissions
     permissions:

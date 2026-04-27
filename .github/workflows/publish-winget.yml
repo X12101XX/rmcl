@@ -35,59 +35,62 @@ jobs:
           Invoke-WebRequest -Uri $checksumUrl -OutFile "$packagePath/$checksumFile"
           $checksum = (((Get-Content "$packagePath/$checksumFile" -Raw) -split '\s+')[0]).ToUpperInvariant()
 
-          $versionManifest = @"
-          PackageIdentifier: $identifier
-          PackageVersion: $version
-          DefaultLocale: en-US
-          ManifestType: version
-          ManifestVersion: 1.9.0
-          "@
+          $versionManifest = @(
+            '# yaml-language-server: $schema=https://aka.ms/winget-manifest.version.1.9.0.schema.json'
+            "PackageIdentifier: $identifier"
+            "PackageVersion: $version"
+            'DefaultLocale: en-US'
+            'ManifestType: version'
+            'ManifestVersion: 1.9.0'
+          ) -join "`n"
           $versionManifest | Set-Content -Path "$packagePath/$identifier.yaml" -Encoding utf8
 
-          $installerManifest = @"
-          PackageIdentifier: $identifier
-          PackageVersion: $version
-          InstallerType: wix
-          Scope: machine
-          InstallerSwitches:
-            Silent: /quiet /norestart
-            SilentWithProgress: /passive /norestart
-          UpgradeBehavior: install
-          Commands:
-          - mcl
-          Installers:
-          - Architecture: x64
-            InstallerUrl: $installerUrl
-            InstallerSha256: $checksum
-          ManifestType: installer
-          ManifestVersion: 1.9.0
-          "@
+          $installerManifest = @(
+            '# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.9.0.schema.json'
+            "PackageIdentifier: $identifier"
+            "PackageVersion: $version"
+            'InstallerType: wix'
+            'Scope: machine'
+            'InstallerSwitches:'
+            '  Silent: /quiet /norestart'
+            '  SilentWithProgress: /passive /norestart'
+            'UpgradeBehavior: install'
+            'Commands:'
+            '- mcl'
+            'Installers:'
+            '- Architecture: x64'
+            "  InstallerUrl: $installerUrl"
+            "  InstallerSha256: $checksum"
+            'ManifestType: installer'
+            'ManifestVersion: 1.9.0'
+          ) -join "`n"
           $installerManifest | Set-Content -Path "$packagePath/$identifier.installer.yaml" -Encoding utf8
 
-          $localeManifest = @"
-          PackageIdentifier: $identifier
-          PackageVersion: $version
-          PackageLocale: en-US
-          Publisher: objz
-          PublisherUrl: https://github.com/objz
-          PublisherSupportUrl: https://github.com/objz/mcl/issues
-          Author: objz
-          PackageName: mcl-launcher
-          PackageUrl: https://github.com/objz/mcl
-          License: GPL-3.0-only
-          LicenseUrl: https://github.com/objz/mcl/blob/master/LICENSE
-          Copyright: Copyright (c) objz
-          ShortDescription: Minecraft launcher TUI
-          Description: A fully featured Minecraft launcher TUI with Microsoft account authentication, instance management, mod loaders, imports, content management, and launch support.
-          Moniker: mcl
-          Tags:
-          - minecraft
-          - launcher
-          - cli
-          - tui
-          ManifestType: defaultLocale
-          ManifestVersion: 1.9.0
-          "@
+          $localeManifest = @(
+            '# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.9.0.schema.json'
+            "PackageIdentifier: $identifier"
+            "PackageVersion: $version"
+            'PackageLocale: en-US'
+            'Publisher: objz'
+            'PublisherUrl: https://github.com/objz'
+            'PublisherSupportUrl: https://github.com/objz/mcl/issues'
+            'Author: objz'
+            'PackageName: mcl-launcher'
+            'PackageUrl: https://github.com/objz/mcl'
+            'License: GPL-3.0-only'
+            'LicenseUrl: https://github.com/objz/mcl/blob/master/LICENSE'
+            'Copyright: Copyright (c) objz'
+            'ShortDescription: Minecraft launcher TUI'
+            'Description: A fully featured Minecraft launcher TUI with Microsoft account authentication, instance management, mod loaders, imports, content management, and launch support.'
+            'Moniker: mcl'
+            'Tags:'
+            '- minecraft'
+            '- launcher'
+            '- cli'
+            '- tui'
+            'ManifestType: defaultLocale'
+            'ManifestVersion: 1.9.0'
+          ) -join "`n"
           $localeManifest | Set-Content -Path "$packagePath/$identifier.locale.en-US.yaml" -Encoding utf8
 
           Remove-Item "$packagePath/$checksumFile"
