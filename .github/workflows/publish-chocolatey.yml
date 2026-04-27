@@ -1,4 +1,4 @@
-name: publish Chocolatey
+name: publish chocolatey
 
 on:
   workflow_call:

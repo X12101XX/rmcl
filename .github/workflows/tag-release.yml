@@ -92,11 +92,3 @@ jobs:
           gh api "repos/${{ github.repository }}/git/refs" \
             -f "ref=refs/tags/${TAG_NAME}" \
             -f "sha=${TAG_SHA}"
-
-      - name: trigger release workflow
-        if: ${{ steps.release.outputs.should-release == 'true' }}
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-          TAG_NAME: ${{ steps.release.outputs.tag }}
-        run: |
-          gh workflow run release.yml --ref "${TAG_NAME}"

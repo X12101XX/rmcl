@@ -1,4 +1,4 @@
-name: publish WinGet
+name: publish winget
 
 on:
   workflow_call:

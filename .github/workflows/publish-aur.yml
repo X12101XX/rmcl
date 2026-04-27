@@ -1,4 +1,4 @@
-name: publish AUR
+name: publish aur
 
 on:
   workflow_call:
