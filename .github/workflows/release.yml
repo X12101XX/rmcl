@@ -303,13 +303,33 @@ jobs:
           | [mcl-launcher-aarch64-unknown-linux-gnu.tar.xz](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-aarch64-unknown-linux-gnu.tar.xz) | ARM64 Linux | [checksum](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-aarch64-unknown-linux-gnu.tar.xz.sha256) |
           | [mcl-launcher-x86_64-unknown-linux-gnu.tar.xz](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-unknown-linux-gnu.tar.xz) | x64 Linux | [checksum](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-unknown-linux-gnu.tar.xz.sha256) |
 
-          ## Package Managers
+          ## Cargo
 
-          \`\`\`sh
+          \`\`\`
           cargo install mcl-launcher
+          \`\`\`
+
+          ## Homebrew
+
+          \`\`\`
           brew install objz/tap/mcl-launcher
+          \`\`\`
+
+          ## WinGet
+
+          \`\`\`
           winget install Objz.MclLauncher
+          \`\`\`
+
+          ## Chocolatey
+
+          \`\`\`
           choco install mcl-launcher
+          \`\`\`
+
+          ## AUR
+
+          \`\`\`
           paru -S mcl-launcher-bin
           \`\`\`
           EOF
@@ -331,15 +351,15 @@ jobs:
     steps:
       - name: Verify Homebrew tap access
         env:
-          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
         run: |
           if [ -z "${GH_TOKEN}" ]; then
-            echo "::error::RELEASE_TOKEN is required to publish Homebrew formulae to ${HOMEBREW_TAP_REPOSITORY}."
+            echo "::error::HOMEBREW_TAP_TOKEN is required to publish Homebrew formulae to ${HOMEBREW_TAP_REPOSITORY}."
             exit 1
           fi
 
           if ! gh repo view "${HOMEBREW_TAP_REPOSITORY}" >/dev/null; then
-            echo "::error::RELEASE_TOKEN cannot access ${HOMEBREW_TAP_REPOSITORY}. Create the tap repository or update RELEASE_TOKEN with access to it."
+            echo "::error::HOMEBREW_TAP_TOKEN cannot access ${HOMEBREW_TAP_REPOSITORY}. Create the tap repository or update HOMEBREW_TAP_TOKEN with access to it."
             exit 1
           fi
 
@@ -347,7 +367,7 @@ jobs:
         with:
           persist-credentials: true
           repository: ${{ env.HOMEBREW_TAP_REPOSITORY }}
-          token: ${{ secrets.RELEASE_TOKEN }}
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
       # So we have access to the formula
       - name: Fetch homebrew formulae
         uses: actions/download-artifact@v7

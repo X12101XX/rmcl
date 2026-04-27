@@ -57,6 +57,20 @@ jobs:
           args: pack ${{ steps.package.outputs.package_dir }}/mcl-launcher.nuspec --version ${{ steps.package.outputs.version }} --output-directory target/chocolatey/out
 
       - name: push Chocolatey package
-        uses: crazy-max/ghaction-chocolatey@v4
-        with:
-          args: push target/chocolatey/out/mcl-launcher.${{ steps.package.outputs.version }}.nupkg --source "https://push.chocolatey.org/" --api-key "${{ secrets.CHOCOLATEY_API_KEY }}" --timeout 2700
+        shell: bash
+        run: |
+          package="target/chocolatey/out/mcl-launcher.${{ steps.package.outputs.version }}.nupkg"
+
+          for attempt in 1 2 3; do
+            if docker run --rm --workdir /wksp --volume "$PWD:/wksp" ghcr.io/crazy-max/chocolatey push "$package" --source "https://push.chocolatey.org/" --api-key "$CHOCOLATEY_API_KEY" --timeout 2700; then
+              exit 0
+            fi
+
+            if [ "$attempt" -eq 3 ]; then
+              break
+            fi
+
+            sleep $((attempt * 30))
+          done
+
+          exit 1
