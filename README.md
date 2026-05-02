@@ -91,17 +91,22 @@ cargo install mcl-launcher
 
 ### package status
 
+release:
+
 [![GitHub release](https://img.shields.io/github/v/release/objz/mcl?style=for-the-badge&logo=github)](https://github.com/objz/mcl/releases)
 [![crates.io](https://img.shields.io/crates/v/mcl-launcher?style=for-the-badge&logo=rust)](https://crates.io/crates/mcl-launcher)
+
+package managers:
+
 [![Homebrew tap](https://img.shields.io/badge/homebrew-objz%2Ftap-FBB040?style=for-the-badge&logo=homebrew)](https://github.com/objz/homebrew-tap)
 [![WinGet](https://img.shields.io/badge/winget-Objz.MclLauncher-0078D4?style=for-the-badge&logo=windows11)](https://winstall.app/apps/Objz.MclLauncher)
 [![Chocolatey](https://img.shields.io/chocolatey/v/mcl-launcher?style=for-the-badge&logo=chocolatey)](https://community.chocolatey.org/packages/mcl-launcher)
+
+aur:
+
 [![AUR mcl-launcher](https://img.shields.io/aur/version/mcl-launcher?style=for-the-badge&logo=archlinux)](https://aur.archlinux.org/packages/mcl-launcher)
 [![AUR mcl-launcher-bin](https://img.shields.io/aur/version/mcl-launcher-bin?style=for-the-badge&logo=archlinux)](https://aur.archlinux.org/packages/mcl-launcher-bin)
 [![AUR mcl-launcher-git](https://img.shields.io/aur/version/mcl-launcher-git?style=for-the-badge&logo=archlinux)](https://aur.archlinux.org/packages/mcl-launcher-git)
-[![Repology](https://img.shields.io/repology/v/mcl-launcher?style=for-the-badge)](https://repology.org/project/mcl-launcher/versions)
-
-there's also [repology](https://repology.org/project/mcl-launcher/versions), but it does not seem to pick up every source here. right now it mostly shows the AUR packages, so don't treat it as the source of truth for WinGet, Chocolatey, Homebrew, or crates.io.
 
 ### from source
 
