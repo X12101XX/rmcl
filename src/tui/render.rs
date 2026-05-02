@@ -82,7 +82,7 @@ impl App {
             self.focused,
             &mut self.account_state,
         );
-        widgets::details::render(
+        widgets::settings::render(
             frame,
             bottom_chunks[1],
             self.focused,

@@ -136,17 +136,17 @@ impl App {
         }
 
         if self.focused == FocusedArea::Settings {
-            match widgets::details::handle_key(
+            match widgets::settings::handle_key(
                 &key_event,
                 self.instances_state.selected_instance(),
                 &self.instance_manager.instances_dir,
             ) {
-                widgets::details::SettingsAction::EditInstance(path)
-                | widgets::details::SettingsAction::EditGlobal(path) => {
+                widgets::settings::SettingsAction::EditInstance(path)
+                | widgets::settings::SettingsAction::EditGlobal(path) => {
                     self.pending_editor = Some(path);
                     return Ok(());
                 }
-                widgets::details::SettingsAction::ToggleDesktop => {
+                widgets::settings::SettingsAction::ToggleDesktop => {
                     if let Some(inst) = self.instances_state.selected_instance() {
                         let name = inst.name.clone();
                         match crate::instance::desktop::toggle(inst) {
@@ -173,7 +173,7 @@ impl App {
                     }
                     return Ok(());
                 }
-                widgets::details::SettingsAction::None => {}
+                widgets::settings::SettingsAction::None => {}
             }
         }
 
