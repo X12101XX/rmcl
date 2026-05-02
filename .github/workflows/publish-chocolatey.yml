@@ -60,6 +60,8 @@ jobs:
         shell: bash
         run: |
           package="target/chocolatey/out/mcl-launcher.${{ steps.package.outputs.version }}.nupkg"
+          version="${{ steps.package.outputs.version }}"
+          public_package_url="https://community.chocolatey.org/packages/mcl-launcher/$version"
           saw_server_error=false
 
           for attempt in 1 2 3; do
@@ -81,6 +83,14 @@ jobs:
             if grep -q "403 (Forbidden)" "$log_file"; then
               if [ "$saw_server_error" = "true" ]; then
                 echo "::warning::Chocolatey returned 403 after an earlier server error. The previous push may have been accepted and put into moderation; treating this publish as complete."
+                exit 0
+              fi
+
+              page_file="$RUNNER_TEMP/chocolatey-package-$version.html"
+              page_status="$(curl --location --silent --show-error --output "$page_file" --write-out "%{http_code}" "$public_package_url")"
+
+              if [ "$page_status" = "200" ] && grep -qE "awaiting moderation|remain unlisted until it has been approved|Version History" "$page_file"; then
+                echo "::warning::Chocolatey returned 403, but the public package page for version $version exists and is awaiting moderation; treating this publish as complete."
                 exit 0
               fi
 
