@@ -496,7 +496,7 @@ pub fn handle_key_no_toggle(key_event: &KeyEvent, state: &mut ContentListState) 
         KeyCode::Enter if key_event.modifiers.contains(KeyModifiers::SHIFT) => {
             if let Some(&real_idx) = state.list_state.selected.and_then(|i| filtered.get(i))
                 && let Some(dir) = state.entries[real_idx].path.parent()
-                && let Err(e) = open::that(dir)
+                && let Err(e) = open::that_detached(dir)
             {
                 tracing::error!("Failed to open directory: {}", e);
             }
@@ -531,7 +531,7 @@ pub fn handle_key(key_event: &KeyEvent, state: &mut ContentListState) -> bool {
         KeyCode::Enter if key_event.modifiers.contains(KeyModifiers::SHIFT) => {
             if let Some(&real_idx) = state.list_state.selected.and_then(|i| filtered.get(i))
                 && let Some(dir) = state.entries[real_idx].path.parent()
-                && let Err(e) = open::that(dir)
+                && let Err(e) = open::that_detached(dir)
             {
                 tracing::error!("Failed to open directory: {}", e);
             }

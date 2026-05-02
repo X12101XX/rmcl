@@ -225,7 +225,7 @@ pub fn handle_key(key_event: &KeyEvent, state: &mut ScreenshotsState) -> bool {
         KeyCode::Enter if key_event.modifiers.contains(KeyModifiers::SHIFT) => {
             if let Some(entry) = state.entries.get(state.selected)
                 && let Some(dir) = entry.path.parent()
-                && let Err(e) = open::that(dir)
+                && let Err(e) = open::that_detached(dir)
             {
                 tracing::error!("Failed to open directory: {}", e);
             }
@@ -233,7 +233,7 @@ pub fn handle_key(key_event: &KeyEvent, state: &mut ScreenshotsState) -> bool {
         }
         KeyCode::Enter => {
             if let Some(entry) = state.entries.get(state.selected)
-                && let Err(e) = open::that(&entry.path)
+                && let Err(e) = open::that_detached(&entry.path)
             {
                 tracing::error!("Failed to open file: {}", e);
             }

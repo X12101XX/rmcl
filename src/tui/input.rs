@@ -275,7 +275,7 @@ impl App {
                                 .instances_dir
                                 .join(&instance.name)
                                 .join(".minecraft");
-                            if let Err(e) = open::that(&dir) {
+                            if let Err(e) = open::that_detached(&dir) {
                                 tracing::error!("Failed to open instance directory: {}", e);
                             }
                         }
