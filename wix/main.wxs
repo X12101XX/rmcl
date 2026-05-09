@@ -60,7 +60,7 @@
 
     <Product
         Id='*'
-        Name='mcl-launcher'
+        Name='rmcl'
         UpgradeCode='BEC08BE4-6A8F-4C1D-A1B4-B1AC963000AE'
         Manufacturer='objz'
         Language='1033'
@@ -83,11 +83,11 @@
             DowngradeErrorMessage='A newer version of [ProductName] is already installed. Setup will now exit.'/>
 
         <Media Id='1' Cabinet='media1.cab' EmbedCab='yes' DiskPrompt='CD-ROM #1'/>
-        <Property Id='DiskPrompt' Value='mcl-launcher Installation'/>
+        <Property Id='DiskPrompt' Value='rmcl Installation'/>
 
         <Directory Id='TARGETDIR' Name='SourceDir'>
             <Directory Id='$(var.PlatformProgramFilesFolder)' Name='PFiles'>
-                <Directory Id='APPLICATIONFOLDER' Name='mcl-launcher'>
+                <Directory Id='APPLICATIONFOLDER' Name='rmcl'>
                     
                     <!--
                       Enabling the license sidecar file in the installer is a four step process:
@@ -123,9 +123,9 @@
                         <Component Id='binary0' Guid='*'>
                             <File
                                 Id='exe0'
-                                Name='mcl.exe'
+                                Name='rmcl.exe'
                                 DiskId='1'
-                                Source='$(var.CargoTargetBinDir)\mcl.exe'
+                                Source='$(var.CargoTargetBinDir)\rmcl.exe'
                                 KeyPath='yes'/>
                         </Component>
                     </Directory>
@@ -173,7 +173,7 @@
         <!--<Icon Id='ProductICO' SourceFile='wix\Product.ico'/>-->
         <!--<Property Id='ARPPRODUCTICON' Value='ProductICO' />-->
 
-        <Property Id='ARPHELPLINK' Value='https://github.com/objz/mcl'/>
+        <Property Id='ARPHELPLINK' Value='https://github.com/objz/rmcl'/>
         
         <UI>
             <UIRef Id='WixUI_FeatureTree'/>
