@@ -1,6 +1,6 @@
 <div align="center">
 
-# mcl
+# rmcl
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
@@ -8,11 +8,11 @@
 [![Issues][issues-shield]][issues-url]
 [![GPL-3.0 License][license-shield]][license-url]
 
-**M**ine**C**raft **L**auncher. or **M**ine**C**raft c**L**i. pick whichever sounds better to you.
+**R**ust **M**ine**C**raft **L**auncher. or **R**ust **M**ine**C**raft c**L**i. pick whichever sounds better to you.
 
 ![screenshot](assets/screenshot.png)
 
-[Report Bug](https://github.com/objz/mcl/issues) · [Request Feature](https://github.com/objz/mcl/issues)
+[Report Bug](https://github.com/objz/rmcl/issues) · [Request Feature](https://github.com/objz/rmcl/issues)
 
 </div>
 
@@ -20,7 +20,7 @@
 
 ## about
 
-we all love TUIs. and we all know the official Minecraft launcher is not exactly a joy to use (performance wise; no hatespeech here). so here's mcl, a fully featured Minecraft launcher that lives in your terminal. written in Rust because if you're replacing something bloated you might as well go all the way.
+we all love TUIs. and we all know the official Minecraft launcher is not exactly a joy to use (performance wise; no hatespeech here). so here's rmcl, a fully featured Minecraft launcher that lives in your terminal. written in Rust because if you're replacing something bloated you might as well go all the way.
 
 it does everything you'd expect from a launcher. multiple instances, mod loaders, modpack imports, Microsoft auth, content management, launching. all from a TUI or from the command line. the TUI is the main thing though, the CLI is there for scripting and automation.
 
@@ -34,7 +34,7 @@ it does everything you'd expect from a launcher. multiple instances, mod loaders
 | **modpack import** | import from Modrinth via `.mrpack` file, URL, or slug |
 | **accounts** | multiple Microsoft accounts and offline players, switch between them |
 | **launching** | launch directly from the TUI or generate a desktop shortcut for any instance |
-| **desktop shortcuts** | click it and Minecraft starts, no need to open mcl or type anything |
+| **desktop shortcuts** | click it and Minecraft starts, no need to open rmcl or type anything |
 | **CLI** | every feature the TUI has is also available as a subcommand |
 | **theming** | 10 built-in themes, custom themes, color overrides |
 
@@ -42,7 +42,7 @@ it does everything you'd expect from a launcher. multiple instances, mod loaders
 
 ## authentication
 
-mcl uses its own Microsoft client ID for Minecraft account authentication.
+rmcl uses its own Microsoft client ID for Minecraft account authentication.
 
 Authentication is performed through Microsoft’s official services.
 
@@ -54,7 +54,7 @@ prebuilt archives are attached to each GitHub release.
 
 ```sh
 # Homebrew
-brew install objz/tap/mcl-launcher
+brew install objz/tap/rmcl
 ```
 
 ### Windows
@@ -64,57 +64,57 @@ packages are submitted from release CI and become available after review.
 
 ```powershell
 # WinGet
-winget install Objz.MclLauncher
+winget install Objz.Rmcl
 
 # Chocolatey
-choco install mcl-launcher
+choco install rmcl
 ```
 
 ### Arch Linux
 
 ```sh
 # from source (release tarball)
-paru -S mcl-launcher
+paru -S rmcl
 
 # prebuilt binary
-paru -S mcl-launcher-bin
+paru -S rmcl-bin
 
 # latest git
-paru -S mcl-launcher-git
+paru -S rmcl-git
 ```
 
 ### Cargo
 
 ```sh
-cargo install mcl-launcher
+cargo install rmcl
 ```
 
 ### package status
 
 release:
 
-[![GitHub release](https://img.shields.io/github/v/release/objz/mcl?style=for-the-badge&logo=github)](https://github.com/objz/mcl/releases)
-[![crates.io](https://img.shields.io/crates/v/mcl-launcher?style=for-the-badge&logo=rust)](https://crates.io/crates/mcl-launcher)
+[![GitHub release](https://img.shields.io/github/v/release/objz/rmcl?style=for-the-badge&logo=github)](https://github.com/objz/rmcl/releases)
+[![crates.io](https://img.shields.io/crates/v/rmcl?style=for-the-badge&logo=rust)](https://crates.io/crates/rmcl)
 
 package managers:
 
 [![Homebrew tap](https://img.shields.io/badge/homebrew-objz%2Ftap-FBB040?style=for-the-badge&logo=homebrew)](https://github.com/objz/homebrew-tap)
-[![WinGet](https://img.shields.io/badge/winget-Objz.MclLauncher-0078D4?style=for-the-badge&logo=windows11)](https://winstall.app/apps/Objz.MclLauncher)
-[![Chocolatey](https://img.shields.io/chocolatey/v/mcl-launcher?style=for-the-badge&logo=chocolatey)](https://community.chocolatey.org/packages/mcl-launcher)
+[![WinGet](https://img.shields.io/badge/winget-Objz.Rmcl-0078D4?style=for-the-badge&logo=windows11)](https://winstall.app/apps/Objz.Rmcl)
+[![Chocolatey](https://img.shields.io/chocolatey/v/rmcl?style=for-the-badge&logo=chocolatey)](https://community.chocolatey.org/packages/rmcl)
 
 aur:
 
-[![AUR mcl-launcher](https://img.shields.io/aur/version/mcl-launcher?style=for-the-badge&logo=archlinux)](https://aur.archlinux.org/packages/mcl-launcher)
-[![AUR mcl-launcher-bin](https://img.shields.io/aur/version/mcl-launcher-bin?style=for-the-badge&logo=archlinux)](https://aur.archlinux.org/packages/mcl-launcher-bin)
-[![AUR mcl-launcher-git](https://img.shields.io/aur/version/mcl-launcher-git?style=for-the-badge&logo=archlinux)](https://aur.archlinux.org/packages/mcl-launcher-git)
+[![AUR rmcl](https://img.shields.io/aur/version/rmcl?style=for-the-badge&logo=archlinux)](https://aur.archlinux.org/packages/rmcl)
+[![AUR rmcl-bin](https://img.shields.io/aur/version/rmcl-bin?style=for-the-badge&logo=archlinux)](https://aur.archlinux.org/packages/rmcl-bin)
+[![AUR rmcl-git](https://img.shields.io/aur/version/rmcl-git?style=for-the-badge&logo=archlinux)](https://aur.archlinux.org/packages/rmcl-git)
 
 ### from source
 
 requires a Rust toolchain and a JDK (`javac` and `jar` on `PATH`).
 
 ```sh
-git clone https://github.com/objz/mcl.git
-cd mcl
+git clone https://github.com/objz/rmcl.git
+cd rmcl
 cargo build --release
 ```
 
@@ -128,19 +128,19 @@ settings, accounts, instances, and cached game metadata.
 
 | what | Linux | macOS | Windows |
 |---|---|---|---|
-| config (`config.toml`, `theme.toml`, `accounts.json`) | `~/.config/mcl/` | `~/Library/Application Support/mcl/` | `%APPDATA%\mcl\` |
-| instances | `~/.local/share/mcl/instances/` | `~/Library/Application Support/mcl/instances/` | `%LOCALAPPDATA%\mcl\instances\` |
-| metadata (versions, libraries, assets, loader profiles) | `~/.local/share/mcl/meta/` | `~/Library/Application Support/mcl/meta/` | `%LOCALAPPDATA%\mcl\meta\` |
+| config (`config.toml`, `theme.toml`, `accounts.json`) | `~/.config/rmcl/` | `~/Library/Application Support/rmcl/` | `%APPDATA%\rmcl\` |
+| instances | `~/.local/share/rmcl/instances/` | `~/Library/Application Support/rmcl/instances/` | `%LOCALAPPDATA%\rmcl\instances\` |
+| metadata (versions, libraries, assets, loader profiles) | `~/.local/share/rmcl/meta/` | `~/Library/Application Support/rmcl/meta/` | `%LOCALAPPDATA%\rmcl\meta\` |
 
 each instance has an `instance.json` for its config and a `.minecraft/` directory with the actual game files. standard layout, nothing weird.
 
 ### logs
 
-launcher logs are per-session and contain mcl's own output. instance launch logs capture game stdout/stderr per launch.
+launcher logs are per-session and contain rmcl's own output. instance launch logs capture game stdout/stderr per launch.
 
 | what | Linux | macOS | Windows |
 |---|---|---|---|
-| launcher logs | `~/.cache/mcl/` | `~/Library/Caches/mcl/` | `%LOCALAPPDATA%\mcl\` |
+| launcher logs | `~/.cache/rmcl/` | `~/Library/Caches/rmcl/` | `%LOCALAPPDATA%\rmcl\` |
 | instance launch logs | `<instances>/<name>/.minecraft/logs/launches/` | same | same |
 
 ---
@@ -153,11 +153,11 @@ everything is configured through TOML files. `config.toml` for paths, default me
 
 ## themes
 
-mcl ships with 10 built-in themes:
+rmcl ships with 10 built-in themes:
 
 `catppuccin` · `dracula` · `nord` · `gruvbox` · `one-dark` · `solarized` · `tailwind` · `tokyo-night` · `rose-pine` · `terminal`
 
-you can create your own by dropping a TOML file in `~/.config/mcl/theme/` and referencing it by name, or point to an absolute path.
+you can create your own by dropping a TOML file in `~/.config/rmcl/theme/` and referencing it by name, or point to an absolute path.
 
 ---
 
@@ -173,13 +173,13 @@ GPL-3.0. see [LICENSE](LICENSE).
 
 ---
 
-[contributors-shield]: https://img.shields.io/github/contributors/objz/mcl.svg?style=for-the-badge
-[contributors-url]: https://github.com/objz/mcl/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/objz/mcl.svg?style=for-the-badge
-[forks-url]: https://github.com/objz/mcl/network/members
-[stars-shield]: https://img.shields.io/github/stars/objz/mcl.svg?style=for-the-badge
-[stars-url]: https://github.com/objz/mcl/stargazers
-[issues-shield]: https://img.shields.io/github/issues/objz/mcl.svg?style=for-the-badge
-[issues-url]: https://github.com/objz/mcl/issues
-[license-shield]: https://img.shields.io/github/license/objz/mcl.svg?style=for-the-badge
-[license-url]: https://github.com/objz/mcl/blob/master/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/objz/rmcl.svg?style=for-the-badge
+[contributors-url]: https://github.com/objz/rmcl/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/objz/rmcl.svg?style=for-the-badge
+[forks-url]: https://github.com/objz/rmcl/network/members
+[stars-shield]: https://img.shields.io/github/stars/objz/rmcl.svg?style=for-the-badge
+[stars-url]: https://github.com/objz/rmcl/stargazers
+[issues-shield]: https://img.shields.io/github/issues/objz/rmcl.svg?style=for-the-badge
+[issues-url]: https://github.com/objz/rmcl/issues
+[license-shield]: https://img.shields.io/github/license/objz/rmcl.svg?style=for-the-badge
+[license-url]: https://github.com/objz/rmcl/blob/master/LICENSE

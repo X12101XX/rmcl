@@ -16,7 +16,7 @@ body:
       label: steps to reproduce
       description: how can we trigger this?
       placeholder: |
-        1. open mcl
+        1. open rmcl
         2. do this
         3. then this
         4. it breaks
@@ -26,9 +26,9 @@ body:
   - type: input
     id: version
     attributes:
-      label: mcl version
-      description: run `mcl --version` or check the bottom of the TUI.
-      placeholder: 0.1.0
+      label: rmcl version
+      description: run `rmcl --version` or check the bottom of the TUI.
+      placeholder: 0.3.0
     validations:
       required: true
 

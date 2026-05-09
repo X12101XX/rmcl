@@ -4,7 +4,7 @@
 
 [remote.github]
 owner = "objz"
-repo = "mcl"
+repo = "rmcl"
 
 [changelog]
 # A Tera template to be rendered for each release in the changelog.
@@ -21,14 +21,14 @@ body = """
         - {% if commit.scope %}*({{ commit.scope }})* {% endif %}\
             {% if commit.breaking %}[**breaking**] {% endif %}\
             {{ commit.message | upper_first }}\
-            {% if commit.github.pr_number %} ([#{{ commit.github.pr_number }}](https://github.com/objz/mcl/pull/{{ commit.github.pr_number }})){% endif %}\
+            {% if commit.github.pr_number %} ([#{{ commit.github.pr_number }}](https://github.com/objz/rmcl/pull/{{ commit.github.pr_number }})){% endif %}\
     {% endfor %}
 {% endfor %}
 {% if github.contributors | filter(attribute="is_first_time", value=true) | length != 0 %}
     ### New Contributors
     {% for contributor in github.contributors | filter(attribute="is_first_time", value=true) %}
         - @{{ contributor.username }} made their first contribution\
-            {% if contributor.pr_number %} in [#{{ contributor.pr_number }}](https://github.com/objz/mcl/pull/{{ contributor.pr_number }}){% endif %}\
+            {% if contributor.pr_number %} in [#{{ contributor.pr_number }}](https://github.com/objz/rmcl/pull/{{ contributor.pr_number }}){% endif %}\
     {% endfor %}
 {% endif %}
 """
@@ -60,7 +60,7 @@ split_commits = false
 # An array of regex based parsers to modify commit messages prior to further processing.
 commit_preprocessors = [
     # Replace issue numbers in commit messages with links.
-    { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "([#${2}](https://github.com/objz/mcl/issues/${2}))" },
+    { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "([#${2}](https://github.com/objz/rmcl/issues/${2}))" },
 ]
 # Prevent commits that are breaking from being excluded by commit parsers.
 protect_breaking_commits = false

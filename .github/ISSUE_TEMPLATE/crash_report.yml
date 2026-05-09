@@ -1,12 +1,12 @@
 name: crash report
-description: mcl crashed or panicked
+description: rmcl crashed or panicked
 labels: ["crash"]
 body:
   - type: textarea
     id: description
     attributes:
       label: what happened
-      description: what were you doing when mcl crashed?
+      description: what were you doing when rmcl crashed?
     validations:
       required: true
 
@@ -17,10 +17,10 @@ body:
       description: |
         paste relevant log output here. you can find logs at:
 
-        - **mcl logs**: `~/.cache/mcl/` (daily rolling files like `mcl.log.2026-04-20`)
-        - **launch logs**: `~/.local/share/mcl/instances/{instance}/.minecraft/logs/launches/`
+        - **rmcl logs**: `~/.cache/rmcl/` (per-session files like `rmcl_2026-04-20_12-34-56.log`)
+        - **launch logs**: `~/.local/share/rmcl/instances/{instance}/.minecraft/logs/launches/`
 
-        you can also view logs in the TUI via the log overlay or use `mcl log` from the CLI.
+        you can also view logs in the TUI via the log overlay or use `rmcl log` from the CLI.
       render: text
     validations:
       required: false
@@ -28,9 +28,9 @@ body:
   - type: input
     id: version
     attributes:
-      label: mcl version
-      description: run `mcl --version` or check the bottom of the TUI.
-      placeholder: 0.1.0
+      label: rmcl version
+      description: run `rmcl --version` or check the bottom of the TUI.
+      placeholder: 0.3.0
     validations:
       required: true
 
