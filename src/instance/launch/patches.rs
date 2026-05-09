@@ -83,17 +83,17 @@ pub async fn apply(
 
     Some(LwjglifyPatches {
         jvm_args,
-        main_class: "MclShim".to_string(),
+        main_class: "RmclShim".to_string(),
         extra_args: vec!["com.gtnewhorizons.retrofuturabootstrap.Main".to_string()],
     })
 }
 
-const SHIM_JAR: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/mcl-shim.jar"));
+const SHIM_JAR: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/rmcl-shim.jar"));
 
 fn deploy_shim(minecraft_dir: &Path) -> PathBuf {
-    let dest = minecraft_dir.join(".mcl-shim.jar");
+    let dest = minecraft_dir.join(".rmcl-shim.jar");
     if let Err(e) = std::fs::write(&dest, SHIM_JAR) {
-        tracing::warn!("Failed to write mcl-shim.jar: {e}");
+        tracing::warn!("Failed to write rmcl-shim.jar: {e}");
     }
     dest
 }
@@ -237,7 +237,7 @@ fn add_lwjgl3(lib_dir: &Path, classpath: &mut Vec<PathBuf>) {
 // recursion on java 24+. the config is written to .minecraft/ and
 // pointed to via -Dlog4j.configurationFile.
 fn write_log4j_config(minecraft_dir: &Path, jvm_args: &mut Vec<String>) {
-    let config_path = minecraft_dir.join(".mcl-log4j2.xml");
+    let config_path = minecraft_dir.join(".rmcl-log4j2.xml");
     let config = r#"<?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Appenders>

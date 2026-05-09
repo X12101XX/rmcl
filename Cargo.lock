@@ -1954,49 +1954,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "mcl-launcher"
-version = "0.2.4"
-dependencies = [
- "async-trait",
- "chrono",
- "clap",
- "color-eyre",
- "config",
- "crossterm 0.29.0",
- "dirs",
- "dirs-next",
- "image",
- "log",
- "minecraft-msa-auth",
- "notify",
- "oauth2",
- "open",
- "ratatui",
- "ratatui-image",
- "ratatui-textarea",
- "ratatui-themekit",
- "reqwest",
- "serde",
- "serde_json",
- "tachyonfx",
- "tempfile",
- "thiserror 2.0.18",
- "throbber-widgets-tui",
- "tokio",
- "toml",
- "tracing",
- "tracing-appender",
- "tracing-subscriber",
- "tui-logger",
- "tui-popup",
- "tui-prompts",
- "tui-scrollview",
- "tui-widget-list",
- "which",
- "zip",
-]
-
-[[package]]
 name = "memchr"
 version = "2.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3041,6 +2998,49 @@ dependencies = [
  "libc",
  "untrusted",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "rmcl"
+version = "0.3.0"
+dependencies = [
+ "async-trait",
+ "chrono",
+ "clap",
+ "color-eyre",
+ "config",
+ "crossterm 0.29.0",
+ "dirs",
+ "dirs-next",
+ "image",
+ "log",
+ "minecraft-msa-auth",
+ "notify",
+ "oauth2",
+ "open",
+ "ratatui",
+ "ratatui-image",
+ "ratatui-textarea",
+ "ratatui-themekit",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tachyonfx",
+ "tempfile",
+ "thiserror 2.0.18",
+ "throbber-widgets-tui",
+ "tokio",
+ "toml",
+ "tracing",
+ "tracing-appender",
+ "tracing-subscriber",
+ "tui-logger",
+ "tui-popup",
+ "tui-prompts",
+ "tui-scrollview",
+ "tui-widget-list",
+ "which",
+ "zip",
 ]
 
 [[package]]

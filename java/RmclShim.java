@@ -1,9 +1,9 @@
 import java.lang.reflect.Method;
 
-public class MclShim {
+public class RmclShim {
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
-            System.err.println("Usage: MclShim <mainClass> [args...]");
+            System.err.println("Usage: RmclShim <mainClass> [args...]");
             System.exit(1);
         }
 

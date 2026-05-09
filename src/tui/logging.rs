@@ -40,7 +40,7 @@ fn push_app_log(line: String) {
 // before you remember this. ask me how i know.
 pub fn init() -> WorkerGuard {
     let log_dir = match dirs_next::cache_dir() {
-        Some(d) => d.join("mcl"),
+        Some(d) => d.join("rmcl"),
         None => std::path::PathBuf::from("./cache"),
     };
     match std::fs::create_dir_all(&log_dir) {
@@ -55,7 +55,7 @@ pub fn init() -> WorkerGuard {
     }
 
     let now = chrono::Local::now().format("%Y-%m-%d_%H-%M-%S");
-    let file_appender = tracing_appender::rolling::never(&log_dir, format!("mcl_{now}.log"));
+    let file_appender = tracing_appender::rolling::never(&log_dir, format!("rmcl_{now}.log"));
     let (non_blocking, guard) = tracing_appender::non_blocking(file_appender);
 
     let env_filter = EnvFilter::builder()

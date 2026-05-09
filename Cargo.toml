@@ -1,11 +1,11 @@
 [package]
-name = "mcl-launcher"
-version = "0.2.4"
+name = "rmcl"
+version = "0.3.0"
 authors = ["objz"]
 edition = "2024"
 description = "A fully featured Minecraft launcher TUI"
-repository = "https://github.com/objz/mcl"
-homepage = "https://github.com/objz/mcl"
+repository = "https://github.com/objz/rmcl"
+homepage = "https://github.com/objz/rmcl"
 license = "GPL-3.0-only"
 readme = "README.md"
 keywords = ["minecraft", "launcher", "tui", "ratatui"]
@@ -18,7 +18,7 @@ license = false
 eula = false
 
 [[bin]]
-name = "mcl"
+name = "rmcl"
 path = "src/main.rs"
 
 [dependencies]

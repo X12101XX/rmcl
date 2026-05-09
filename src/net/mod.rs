@@ -44,7 +44,7 @@ impl HttpClient {
     pub fn new() -> Self {
         let client = Client::builder()
             .user_agent(format!(
-                "mcl/{} (Minecraft Launcher)",
+                "rmcl/{} (Minecraft Launcher)",
                 env!("CARGO_PKG_VERSION")
             ))
             .timeout(std::time::Duration::from_secs(30))

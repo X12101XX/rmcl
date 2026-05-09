@@ -14,7 +14,7 @@ use clap::{Arg, ArgAction, ArgGroup, Command};
 pub async fn init() {
     let matches = build_command().get_matches();
 
-    // no subcommand means the user just ran `mcl` bare, so fall through to TUI mode
+    // no subcommand means the user just ran `rmcl` bare, so fall through to TUI mode
     if matches.subcommand().is_none() {
         // force-init the theme so it's ready before the TUI renders
         let _ = &*crate::config::theme::THEME;
@@ -43,7 +43,7 @@ pub async fn init() {
 }
 
 fn build_command() -> Command {
-    Command::new("mcl")
+    Command::new("rmcl")
         .about("Minecraft CLI Launcher")
         .version(env!("CARGO_PKG_VERSION"))
         .subcommand_required(false)
@@ -245,7 +245,7 @@ mod tests {
     #[test]
     fn parses_instance_list_subcommand() {
         let matches = build_command()
-            .try_get_matches_from(["mcl", "instance", "list"])
+            .try_get_matches_from(["rmcl", "instance", "list"])
             .expect("command should parse");
         assert!(matches.subcommand_matches("instance").is_some());
     }

@@ -21,7 +21,7 @@ pub struct Paths {
 fn default_instances_dir() -> String {
     dirs_next::data_dir()
         .unwrap_or_else(|| PathBuf::from("."))
-        .join("mcl")
+        .join("rmcl")
         .join("instances")
         .to_string_lossy()
         .into_owned()
@@ -30,7 +30,7 @@ fn default_instances_dir() -> String {
 fn default_meta_dir() -> String {
     dirs_next::data_dir()
         .unwrap_or_else(|| PathBuf::from("."))
-        .join("mcl")
+        .join("rmcl")
         .join("meta")
         .to_string_lossy()
         .into_owned()
@@ -181,14 +181,14 @@ mod tests {
 
     #[test]
     fn resolve_path_absolute() {
-        assert_eq!(resolve_path("/opt/mcl"), PathBuf::from("/opt/mcl"));
+        assert_eq!(resolve_path("/opt/rmcl"), PathBuf::from("/opt/rmcl"));
     }
 
     #[test]
     fn resolve_path_tilde_prefix() {
-        let resolved = resolve_path("~/games/mcl");
+        let resolved = resolve_path("~/games/rmcl");
         assert!(!resolved.to_string_lossy().starts_with('~'));
-        assert!(resolved.to_string_lossy().ends_with("games/mcl"));
+        assert!(resolved.to_string_lossy().ends_with("games/rmcl"));
     }
 
     #[test]
@@ -200,22 +200,22 @@ mod tests {
     #[test]
     fn resolve_instances_dir_absolute() {
         let paths = Paths {
-            instances_dir: "/opt/mcl/instances".to_owned(),
+            instances_dir: "/opt/rmcl/instances".to_owned(),
             ..Paths::default()
         };
         assert_eq!(
             paths.resolve_instances_dir(),
-            PathBuf::from("/opt/mcl/instances")
+            PathBuf::from("/opt/rmcl/instances")
         );
     }
 
     #[test]
     fn resolve_meta_dir_absolute() {
         let paths = Paths {
-            meta_dir: "/opt/mcl/meta".to_owned(),
+            meta_dir: "/opt/rmcl/meta".to_owned(),
             ..Paths::default()
         };
-        assert_eq!(paths.resolve_meta_dir(), PathBuf::from("/opt/mcl/meta"));
+        assert_eq!(paths.resolve_meta_dir(), PathBuf::from("/opt/rmcl/meta"));
     }
 
     #[test]

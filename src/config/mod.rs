@@ -15,7 +15,7 @@ pub use settings::Config;
 pub fn get_config_path() -> PathBuf {
     dirs_next::config_dir()
         .unwrap_or_else(|| PathBuf::from("."))
-        .join("mcl")
+        .join("rmcl")
 }
 
 // seeds the config file from the bundled default on first run

@@ -148,8 +148,8 @@ mod tests {
     async fn test_vanilla_install_noop() {
         let client = HttpClient::new();
         let installer = VanillaInstaller;
-        let tmp = std::env::temp_dir().join("mcl_test_vanilla_install");
-        let meta = std::env::temp_dir().join("mcl_test_meta");
+        let tmp = std::env::temp_dir().join("rmcl_test_vanilla_install");
+        let meta = std::env::temp_dir().join("rmcl_test_meta");
         installer
             .install(&client, "1.20.1", "vanilla", &tmp, &meta)
             .await

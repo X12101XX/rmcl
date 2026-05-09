@@ -93,7 +93,7 @@ mod tests {
 
     fn unique_temp_dir() -> std::path::PathBuf {
         std::env::temp_dir().join(format!(
-            "mcl_cli_log_test_{}",
+            "rmcl_cli_log_test_{}",
             std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .expect("time should work")

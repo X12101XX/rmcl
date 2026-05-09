@@ -319,8 +319,8 @@ mod tests {
     use std::path::PathBuf;
 
     fn test_manager() -> (InstanceManager, PathBuf) {
-        let tmp = std::env::temp_dir().join(format!("mcl_test_{}", uuid_like()));
-        let meta = std::env::temp_dir().join(format!("mcl_meta_test_{}", uuid_like()));
+        let tmp = std::env::temp_dir().join(format!("rmcl_test_{}", uuid_like()));
+        let meta = std::env::temp_dir().join(format!("rmcl_meta_test_{}", uuid_like()));
         std::fs::create_dir_all(&tmp).ok();
         std::fs::create_dir_all(&meta).ok();
         (InstanceManager::new(tmp.clone(), meta), tmp)

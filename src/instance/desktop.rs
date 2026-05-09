@@ -14,7 +14,7 @@ pub fn desktop_path(name: &str) -> Option<PathBuf> {
     {
         dirs_next::data_dir().map(|d| {
             d.join("applications")
-                .join(format!("mcl-{sanitized}.desktop"))
+                .join(format!("rmcl-{sanitized}.desktop"))
         })
     }
 
@@ -36,7 +36,7 @@ pub fn desktop_path(name: &str) -> Option<PathBuf> {
 }
 
 pub fn icon_path() -> Option<PathBuf> {
-    dirs_next::data_dir().map(|d| d.join("mcl").join("icon.svg"))
+    dirs_next::data_dir().map(|d| d.join("rmcl").join("icon.svg"))
 }
 
 // lazily writes the bundled svg icon to disk the first time a shortcut needs it
@@ -145,7 +145,7 @@ fn build_linux_desktop(name: &str, icon: Option<&Path>) -> String {
     out.push_str("Type=Application\n");
     out.push_str(&format!("Name=Minecraft - {name}\n"));
     out.push_str(&format!("Comment=Launch {name} Minecraft instance\n"));
-    out.push_str(&format!("Exec=mcl instance launch \"{name}\"\n"));
+    out.push_str(&format!("Exec=rmcl instance launch \"{name}\"\n"));
     if let Some(icon) = icon {
         out.push_str(&format!("Icon={}\n", icon.display()));
     }
@@ -159,7 +159,7 @@ fn build_windows_shortcut(name: &str) -> String {
     let mut out = String::new();
     out.push_str("@echo off\r\n");
     out.push_str(&format!("title Minecraft - {name}\r\n"));
-    out.push_str(&format!("mcl instance launch \"{name}\"\r\n"));
+    out.push_str(&format!("rmcl instance launch \"{name}\"\r\n"));
     out.push_str("pause\r\n");
     out
 }
@@ -169,7 +169,7 @@ fn build_macos_command(name: &str) -> String {
     let mut out = String::new();
     out.push_str("#!/bin/bash\n");
     out.push_str(&format!("# Launch Minecraft instance: {name}\n"));
-    out.push_str(&format!("mcl instance launch \"{name}\"\n"));
+    out.push_str(&format!("rmcl instance launch \"{name}\"\n"));
     out
 }
 
@@ -215,7 +215,7 @@ mod tests {
     fn build_content_linux() {
         let content = build_content("TestPack", None);
         assert!(content.contains("Name=Minecraft - TestPack"));
-        assert!(content.contains("Exec=mcl instance launch \"TestPack\""));
+        assert!(content.contains("Exec=rmcl instance launch \"TestPack\""));
         assert!(content.contains("Terminal=true"));
         assert!(content.contains("Categories=Game;"));
     }
