@@ -297,29 +297,29 @@ jobs:
 
           | File | Platform | Checksum |
           | --- | --- | --- |
-          | [mcl-launcher-aarch64-apple-darwin.tar.xz](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-aarch64-apple-darwin.tar.xz) | Apple Silicon macOS | [checksum](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-aarch64-apple-darwin.tar.xz.sha256) |
-          | [mcl-launcher-x86_64-apple-darwin.tar.xz](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-apple-darwin.tar.xz) | Intel macOS | [checksum](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-apple-darwin.tar.xz.sha256) |
-          | [mcl-launcher-x86_64-pc-windows-msvc.zip](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-pc-windows-msvc.zip) | x64 Windows | [checksum](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-pc-windows-msvc.zip.sha256) |
-          | [mcl-launcher-x86_64-pc-windows-msvc.msi](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-pc-windows-msvc.msi) | x64 Windows | [checksum](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-pc-windows-msvc.msi.sha256) |
-          | [mcl-launcher-aarch64-unknown-linux-gnu.tar.xz](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-aarch64-unknown-linux-gnu.tar.xz) | ARM64 Linux | [checksum](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-aarch64-unknown-linux-gnu.tar.xz.sha256) |
-          | [mcl-launcher-x86_64-unknown-linux-gnu.tar.xz](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-unknown-linux-gnu.tar.xz) | x64 Linux | [checksum](https://github.com/objz/mcl/releases/download/${RELEASE_TAG}/mcl-launcher-x86_64-unknown-linux-gnu.tar.xz.sha256) |
+          | [rmcl-aarch64-apple-darwin.tar.xz](https://github.com/objz/rmcl/releases/download/${RELEASE_TAG}/rmcl-aarch64-apple-darwin.tar.xz) | Apple Silicon macOS | [checksum](https://github.com/objz/rmcl/releases/download/${RELEASE_TAG}/rmcl-aarch64-apple-darwin.tar.xz.sha256) |
+          | [rmcl-x86_64-apple-darwin.tar.xz](https://github.com/objz/rmcl/releases/download/${RELEASE_TAG}/rmcl-x86_64-apple-darwin.tar.xz) | Intel macOS | [checksum](https://github.com/objz/rmcl/releases/download/${RELEASE_TAG}/rmcl-x86_64-apple-darwin.tar.xz.sha256) |
+          | [rmcl-x86_64-pc-windows-msvc.zip](https://github.com/objz/rmcl/releases/download/${RELEASE_TAG}/rmcl-x86_64-pc-windows-msvc.zip) | x64 Windows | [checksum](https://github.com/objz/rmcl/releases/download/${RELEASE_TAG}/rmcl-x86_64-pc-windows-msvc.zip.sha256) |
+          | [rmcl-x86_64-pc-windows-msvc.msi](https://github.com/objz/rmcl/releases/download/${RELEASE_TAG}/rmcl-x86_64-pc-windows-msvc.msi) | x64 Windows | [checksum](https://github.com/objz/rmcl/releases/download/${RELEASE_TAG}/rmcl-x86_64-pc-windows-msvc.msi.sha256) |
+          | [rmcl-aarch64-unknown-linux-gnu.tar.xz](https://github.com/objz/rmcl/releases/download/${RELEASE_TAG}/rmcl-aarch64-unknown-linux-gnu.tar.xz) | ARM64 Linux | [checksum](https://github.com/objz/rmcl/releases/download/${RELEASE_TAG}/rmcl-aarch64-unknown-linux-gnu.tar.xz.sha256) |
+          | [rmcl-x86_64-unknown-linux-gnu.tar.xz](https://github.com/objz/rmcl/releases/download/${RELEASE_TAG}/rmcl-x86_64-unknown-linux-gnu.tar.xz) | x64 Linux | [checksum](https://github.com/objz/rmcl/releases/download/${RELEASE_TAG}/rmcl-x86_64-unknown-linux-gnu.tar.xz.sha256) |
 
           ## Cargo
 
           \`\`\`
-          cargo install mcl-launcher
+          cargo install rmcl
           \`\`\`
 
           ## Homebrew
 
           \`\`\`
-          brew install objz/tap/mcl-launcher
+          brew install objz/tap/rmcl
           \`\`\`
 
           ## WinGet
 
           \`\`\`
-          winget install Objz.MclLauncher
+          winget install Objz.Rmcl
           \`\`\`
 
           The generated WinGet manifest is attached as \`winget-manifest-${APP_VERSION}.zip\` for local validation.
@@ -327,13 +327,13 @@ jobs:
           ## Chocolatey
 
           \`\`\`
-          choco install mcl-launcher
+          choco install rmcl
           \`\`\`
 
           ## AUR
 
           \`\`\`
-          paru -S mcl-launcher-bin
+          paru -S rmcl-bin
           \`\`\`
           EOF
 

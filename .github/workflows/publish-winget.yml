@@ -24,13 +24,13 @@ jobs:
           $plan = $env:PLAN | ConvertFrom-Json
           $tag = $plan.announcement_tag
           $version = $plan.releases[0].app_version
-          $identifier = 'Objz.MclLauncher'
-          $packagePath = "manifests/o/Objz/MclLauncher/$version"
+          $identifier = 'Objz.Rmcl'
+          $packagePath = "manifests/o/Objz/Rmcl/$version"
           $assetPath = "winget-manifest-$version.zip"
-          $installerFile = 'mcl-launcher-x86_64-pc-windows-msvc.msi'
+          $installerFile = 'rmcl-x86_64-pc-windows-msvc.msi'
           $checksumFile = "$installerFile.sha256"
-          $installerUrl = "https://github.com/objz/mcl/releases/download/$tag/$installerFile"
-          $checksumUrl = "https://github.com/objz/mcl/releases/download/$tag/$checksumFile"
+          $installerUrl = "https://github.com/objz/rmcl/releases/download/$tag/$installerFile"
+          $checksumUrl = "https://github.com/objz/rmcl/releases/download/$tag/$checksumFile"
 
           New-Item -ItemType Directory -Path $packagePath -Force | Out-Null
           Invoke-WebRequest -Uri $checksumUrl -OutFile "$packagePath/$checksumFile"
@@ -57,7 +57,7 @@ jobs:
             '  SilentWithProgress: /passive /norestart'
             'UpgradeBehavior: install'
             'Commands:'
-            '- mcl'
+            '- rmcl'
             'Installers:'
             '- Architecture: x64'
             "  InstallerUrl: $installerUrl"
@@ -74,16 +74,16 @@ jobs:
             'PackageLocale: en-US'
             'Publisher: objz'
             'PublisherUrl: https://github.com/objz'
-            'PublisherSupportUrl: https://github.com/objz/mcl/issues'
+            'PublisherSupportUrl: https://github.com/objz/rmcl/issues'
             'Author: objz'
-            'PackageName: mcl-launcher'
-            'PackageUrl: https://github.com/objz/mcl'
+            'PackageName: rmcl'
+            'PackageUrl: https://github.com/objz/rmcl'
             'License: GPL-3.0-only'
-            'LicenseUrl: https://github.com/objz/mcl/blob/master/LICENSE'
+            'LicenseUrl: https://github.com/objz/rmcl/blob/master/LICENSE'
             'Copyright: Copyright (c) objz'
             'ShortDescription: Minecraft launcher TUI'
             'Description: A fully featured Minecraft launcher TUI with Microsoft account authentication, instance management, mod loaders, imports, content management, and launch support.'
-            'Moniker: mcl'
+            'Moniker: rmcl'
             'Tags:'
             '- minecraft'
             '- launcher'

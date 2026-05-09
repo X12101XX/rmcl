@@ -28,12 +28,12 @@ jobs:
           version="$(jq --raw-output '.releases[0].app_version' <<< "$PLAN")"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
-      - name: prepare mcl-launcher
+      - name: prepare rmcl
         run: |
-          sed -i "s|^pkgver=.*|pkgver=${{ steps.version.outputs.version }}|" pkg/mcl-launcher/PKGBUILD
-          cp pkg/mcl-launcher/PKGBUILD PKGBUILD
+          sed -i "s|^pkgver=.*|pkgver=${{ steps.version.outputs.version }}|" pkg/rmcl/PKGBUILD
+          cp pkg/rmcl/PKGBUILD PKGBUILD
 
-      - name: update checksums for mcl-launcher
+      - name: update checksums for rmcl
         uses: datakrama/archlinux-package-action@v2
         with:
           updpkgsums: true
@@ -41,10 +41,10 @@ jobs:
           flags: ""
           namcap: false
 
-      - name: publish mcl-launcher to AUR
+      - name: publish rmcl to AUR
         uses: KSXGitHub/github-actions-deploy-aur@v4.1.3
         with:
-          pkgname: mcl-launcher
+          pkgname: rmcl
           pkgbuild: PKGBUILD
           assets: .SRCINFO
           commit_username: objz
@@ -52,14 +52,14 @@ jobs:
           ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
           commit_message: "Update to ${{ steps.version.outputs.version }}"
 
-      - name: prepare mcl-launcher-bin
+      - name: prepare rmcl-bin
         run: |
-          sed -i "s|^pkgver=.*|pkgver=${{ steps.version.outputs.version }}|" pkg/mcl-launcher-bin/PKGBUILD
-          sed -i "s|^pkgrel=.*|pkgrel=1|" pkg/mcl-launcher-bin/PKGBUILD
-          cp pkg/mcl-launcher-bin/PKGBUILD PKGBUILD
+          sed -i "s|^pkgver=.*|pkgver=${{ steps.version.outputs.version }}|" pkg/rmcl-bin/PKGBUILD
+          sed -i "s|^pkgrel=.*|pkgrel=1|" pkg/rmcl-bin/PKGBUILD
+          cp pkg/rmcl-bin/PKGBUILD PKGBUILD
           rm -f .SRCINFO
 
-      - name: update checksums for mcl-launcher-bin
+      - name: update checksums for rmcl-bin
         uses: datakrama/archlinux-package-action@v2
         with:
           updpkgsums: true
@@ -67,10 +67,10 @@ jobs:
           flags: ""
           namcap: false
 
-      - name: publish mcl-launcher-bin to AUR
+      - name: publish rmcl-bin to AUR
         uses: KSXGitHub/github-actions-deploy-aur@v4.1.3
         with:
-          pkgname: mcl-launcher-bin
+          pkgname: rmcl-bin
           pkgbuild: PKGBUILD
           assets: .SRCINFO
           commit_username: objz
@@ -78,12 +78,12 @@ jobs:
           ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
           commit_message: "Update to ${{ steps.version.outputs.version }}"
 
-      - name: prepare mcl-launcher-git
+      - name: prepare rmcl-git
         run: |
-          cp pkg/mcl-launcher-git/PKGBUILD PKGBUILD
+          cp pkg/rmcl-git/PKGBUILD PKGBUILD
           rm -f .SRCINFO
 
-      - name: update metadata for mcl-launcher-git
+      - name: update metadata for rmcl-git
         uses: datakrama/archlinux-package-action@v2
         with:
           updpkgsums: true
@@ -91,10 +91,10 @@ jobs:
           flags: ""
           namcap: false
 
-      - name: publish mcl-launcher-git to AUR
+      - name: publish rmcl-git to AUR
         uses: KSXGitHub/github-actions-deploy-aur@v4.1.3
         with:
-          pkgname: mcl-launcher-git
+          pkgname: rmcl-git
           pkgbuild: PKGBUILD
           assets: .SRCINFO
           commit_username: objz
