@@ -104,6 +104,7 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
           PLAN: ${{ inputs.plan }}
         run: |
           $plan = $env:PLAN | ConvertFrom-Json
