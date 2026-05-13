@@ -8,7 +8,7 @@
 [![Issues][issues-shield]][issues-url]
 [![GPL-3.0 License][license-shield]][license-url]
 
-**R**ust **M**ine**C**raft **L**auncher. or **R**ust **M**ine**C**raft c**L**i. pick whichever sounds better to you.
+**R**usty **M**ine**C**raft **L**auncher. or **R**ust **M**ine**C**raft c**L**i. pick whichever sounds better to you.
 
 ![screenshot](assets/screenshot.png)
 
