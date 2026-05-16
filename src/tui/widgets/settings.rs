@@ -66,8 +66,8 @@ pub fn render(
         .add_modifier(Modifier::BOLD);
     let dim_style = Style::default().fg(theme.text_dim());
 
-    let memory_min = inst.memory_min.as_deref().unwrap_or("512M");
-    let memory_max = inst.memory_max.as_deref().unwrap_or("2G");
+    let memory_min = inst.memory_min.as_deref().unwrap_or(&crate::config::SETTINGS.defaults.memory_min);
+    let memory_max = inst.memory_max.as_deref().unwrap_or(&crate::config::SETTINGS.defaults.memory_max);
     let java_path = inst.java_path.as_deref().unwrap_or("system");
     let jvm_args = if inst.jvm_args.is_empty() {
         "none".to_string()
