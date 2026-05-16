@@ -71,8 +71,20 @@ struct MetaOsRule {
 struct LoaderProfileJson {
     main_class: String,
     libraries: Vec<LoaderLibrary>,
+    /// Legacy flat format: `"gameArguments": [...]`
     #[serde(default)]
     game_arguments: Vec<String>,
+    /// Modern format: `"arguments": { "game": [...], "jvm": [...] }`
+    #[serde(default)]
+    arguments: Option<LoaderArguments>,
+}
+
+#[derive(serde::Deserialize, Default)]
+struct LoaderArguments {
+    #[serde(default)]
+    game: Vec<String>,
+    #[serde(default)]
+    jvm: Vec<String>,
 }
 
 #[derive(serde::Deserialize)]
@@ -197,14 +209,14 @@ pub async fn launch(
 
     // if there's a mod loader, read its profile to get the real main class,
     // extra libraries, and any additional game arguments (e.g. --tweakClass)
-    let (main_class, loader_game_args) = if let Some(filename) = profile_filename {
+    let (main_class, loader_game_args, loader_jvm_args) = if let Some(filename) = profile_filename {
         let profile_path = meta_dir.join("loader-profiles").join(&filename);
         if !profile_path.exists() {
             return Err(LaunchError::MetaNotFound(
                 profile_path.display().to_string(),
             ));
         }
-        let profile: LoaderProfileJson =
+        let mut profile: LoaderProfileJson =
             serde_json::from_slice(&tokio::fs::read(&profile_path).await?)?;
 
         // forge/neoforge install some libs locally in the instance dir.
@@ -228,9 +240,18 @@ pub async fn launch(
                 }
             }
         }
-        (profile.main_class, profile.game_arguments)
+        // merge game args from both modern (arguments.game) and legacy (gameArguments) formats
+        let main_class = profile.main_class;
+        let game_args_legacy = profile.game_arguments;
+        let args = profile.arguments.take();
+        let game_args = match args {
+            Some(ref a) if !a.game.is_empty() => a.game.clone(),
+            _ => game_args_legacy,
+        };
+        let jvm_args = args.map(|a| a.jvm).unwrap_or_default();
+        (main_class, game_args, jvm_args)
     } else {
-        (meta.main_class.clone(), Vec::new())
+        (meta.main_class.clone(), Vec::new(), Vec::new())
     };
 
     classpath.push(
@@ -273,6 +294,7 @@ pub async fn launch(
         format!("-Xms{}", config.memory_min.as_deref().unwrap_or("512M")),
         format!("-Xmx{}", config.memory_max.as_deref().unwrap_or("2G")),
     ];
+    jvm.extend(loader_jvm_args);
     jvm.extend(patch_jvm_args);
     jvm.extend(config.jvm_args.clone());
 
