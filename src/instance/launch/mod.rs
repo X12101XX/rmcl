@@ -389,13 +389,6 @@ pub async fn launch(
     );
     tracing::info!("[{}] Main class: {}", name, main_class);
 
-    // wayland + nvidia proprietary driver workaround:
-    // libEGL_nvidia.so.0 segfaults when lwjgl uses egl on wayland.
-    // removing WAYLAND_DISPLAY forces glfw to fall back to x11 (xwayland).
-    #[cfg(target_os = "linux")]
-    let wayland_nvidia_workaround = std::env::var("WAYLAND_DISPLAY").is_ok()
-        && std::path::Path::new("/proc/driver/nvidia/version").exists();
-
     let mut cmd = tokio::process::Command::new(&java);
     cmd.args(&jvm);
     cmd.arg("-cp").arg(&cp_str);
@@ -406,9 +399,40 @@ pub async fn launch(
     cmd.stdout(std::process::Stdio::piped());
     cmd.stderr(std::process::Stdio::piped());
 
+    // linux-only env cleanup for the child process:
+    //   - strip inherited LD_LIBRARY_PATH/LD_PRELOAD to avoid nvidia's
+    //     libegl segfaulting when lwjgl uses egl on wayland (prismlauncher
+    //     does the same in CleanEnviroment). users can set the
+    //     LAUNCHER_ variants to inject specific paths if needed.
+    //   - remove WAYLAND_DISPLAY so glfw falls back to x11 (xwayland).
+    //     the wayland glfw backend doesn't support glfwGetWindowPos(),
+    //     which minecraft calls during initialization.
     #[cfg(target_os = "linux")]
-    if wayland_nvidia_workaround {
-        tracing::info!("[{}] Wayland + NVIDIA detected, removing WAYLAND_DISPLAY to force X11", name);
+    {
+        let ld_path = std::env::var("LD_LIBRARY_PATH").ok();
+        let launcher_ld = std::env::var("LAUNCHER_LD_LIBRARY_PATH").ok();
+        match (ld_path, launcher_ld) {
+            (Some(_), Some(override_path)) => {
+                cmd.env("LD_LIBRARY_PATH", &override_path);
+            }
+            (Some(_), None) => {
+                cmd.env_remove("LD_LIBRARY_PATH");
+            }
+            _ => {}
+        }
+
+        let ld_preload = std::env::var("LD_PRELOAD").ok();
+        let launcher_preload = std::env::var("LAUNCHER_LD_PRELOAD").ok();
+        match (ld_preload, launcher_preload) {
+            (Some(_), Some(override_path)) => {
+                cmd.env("LD_PRELOAD", &override_path);
+            }
+            (Some(_), None) => {
+                cmd.env_remove("LD_PRELOAD");
+            }
+            _ => {}
+        }
+
         cmd.env_remove("WAYLAND_DISPLAY");
     }
 
