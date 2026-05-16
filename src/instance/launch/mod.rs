@@ -352,7 +352,7 @@ pub async fn launch(
         None => return Err(LaunchError::Auth("No account selected".to_owned())),
     };
 
-    let game_args = build_game_args(
+    let mut game_args = build_game_args(
         config,
         &minecraft_dir,
         meta_dir,
@@ -365,6 +365,14 @@ pub async fn launch(
         },
         loader_game_args,
     );
+
+    // forgebootstrap (forge 1.21+) needs an explicit launch target,
+    // otherwise modlauncher may pass null to immediatewindowhandler.
+    if matches!(config.loader, ModLoader::Forge | ModLoader::NeoForge) {
+        // add at the front so ForgeBootstrap finds it before any game args
+        game_args.insert(0, "forge_client".to_string());
+        game_args.insert(0, "--launchTarget".to_string());
+    }
 
     let (kill_tx, kill_rx) = tokio::sync::oneshot::channel::<()>();
     crate::running::register_kill(&name, kill_tx);
@@ -404,9 +412,8 @@ pub async fn launch(
     //     libegl segfaulting when lwjgl uses egl on wayland (prismlauncher
     //     does the same in CleanEnviroment). users can set the
     //     LAUNCHER_ variants to inject specific paths if needed.
-    //   - remove WAYLAND_DISPLAY so glfw falls back to x11 (xwayland).
-    //     the wayland glfw backend doesn't support glfwGetWindowPos(),
-    //     which minecraft calls during initialization.
+    //   - set GDK_BACKEND=x11 to avoid Forge early window (gtk) issues
+    //     under wayland.
     #[cfg(target_os = "linux")]
     {
         let ld_path = std::env::var("LD_LIBRARY_PATH").ok();
@@ -433,7 +440,7 @@ pub async fn launch(
             _ => {}
         }
 
-        cmd.env_remove("WAYLAND_DISPLAY");
+        cmd.env("GDK_BACKEND", "x11");
     }
 
     let mut child = match cmd.spawn() {
