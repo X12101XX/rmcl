@@ -291,8 +291,8 @@ pub async fn launch(
         .unwrap_or_else(crate::net::detect_java_path);
 
     let mut jvm: Vec<String> = vec![
-        format!("-Xms{}", config.memory_min.as_deref().unwrap_or("512M")),
-        format!("-Xmx{}", config.memory_max.as_deref().unwrap_or("2G")),
+        format!("-Xms{}", config.memory_min.as_deref().unwrap_or(&crate::config::SETTINGS.defaults.memory_min)),
+        format!("-Xmx{}", config.memory_max.as_deref().unwrap_or(&crate::config::SETTINGS.defaults.memory_max)),
     ];
     jvm.extend(loader_jvm_args);
     jvm.extend(patch_jvm_args);
