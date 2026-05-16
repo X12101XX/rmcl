@@ -389,6 +389,13 @@ pub async fn launch(
     );
     tracing::info!("[{}] Main class: {}", name, main_class);
 
+    // wayland + nvidia proprietary driver workaround:
+    // libEGL_nvidia.so.0 segfaults when lwjgl uses egl on wayland.
+    // removing WAYLAND_DISPLAY forces glfw to fall back to x11 (xwayland).
+    #[cfg(target_os = "linux")]
+    let wayland_nvidia_workaround = std::env::var("WAYLAND_DISPLAY").is_ok()
+        && std::path::Path::new("/proc/driver/nvidia/version").exists();
+
     let mut cmd = tokio::process::Command::new(&java);
     cmd.args(&jvm);
     cmd.arg("-cp").arg(&cp_str);
@@ -398,6 +405,12 @@ pub async fn launch(
     cmd.current_dir(&minecraft_dir);
     cmd.stdout(std::process::Stdio::piped());
     cmd.stderr(std::process::Stdio::piped());
+
+    #[cfg(target_os = "linux")]
+    if wayland_nvidia_workaround {
+        tracing::info!("[{}] Wayland + NVIDIA detected, removing WAYLAND_DISPLAY to force X11", name);
+        cmd.env_remove("WAYLAND_DISPLAY");
+    }
 
     let mut child = match cmd.spawn() {
         Ok(c) => c,
