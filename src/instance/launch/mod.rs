@@ -74,6 +74,9 @@ struct LoaderProfileJson {
     /// Legacy flat format: `"gameArguments": [...]`
     #[serde(default)]
     game_arguments: Vec<String>,
+    /// Forge installer format: `"jvmArguments": [...]`
+    #[serde(default)]
+    jvm_arguments: Vec<String>,
     /// Modern format: `"arguments": { "game": [...], "jvm": [...] }`
     #[serde(default)]
     arguments: Option<LoaderArguments>,
@@ -166,6 +169,39 @@ fn build_game_args(
     game_args
 }
 
+/// Returns true if the Minecraft game version is at least the given major.minor.
+/// Handles standard release versions like "1.20.1", "1.21", "1.21.4".
+/// Non-numeric version strings (snapshots) always return false.
+fn is_game_version_at_least(version: &str, major: u32, minor: u32) -> bool {
+    let parts: Vec<u32> = version
+        .split('.')
+        .filter_map(|s| s.parse().ok())
+        .collect();
+    parts.len() >= 2 && {
+        let (v_major, v_minor) = (parts[0], parts[1]);
+        v_major > major || (v_major == major && v_minor >= minor)
+    }
+}
+
+/// Resolve Forge installer placeholders in JVM arguments:
+///   ${library_directory} → meta libraries dir
+///   ${classpath_separator} → ':' or ';'
+///   ${version_name}        → e.g. "1.20.1-forge-47.4.0"
+fn resolve_jvm_placeholders(
+    args: Vec<String>,
+    library_directory: &str,
+    classpath_separator: &str,
+    version_name: &str,
+) -> Vec<String> {
+    args.into_iter()
+        .map(|arg| {
+            arg.replace("${library_directory}", library_directory)
+                .replace("${classpath_separator}", classpath_separator)
+                .replace("${version_name}", version_name)
+        })
+        .collect()
+}
+
 pub async fn launch(
     config: &InstanceConfig,
     instances_dir: &Path,
@@ -248,7 +284,28 @@ pub async fn launch(
             Some(ref a) if !a.game.is_empty() => a.game.clone(),
             _ => game_args_legacy,
         };
-        let jvm_args = args.map(|a| a.jvm).unwrap_or_default();
+        // merge jvm args from modern (arguments.jvm) and forge (jvmArguments) formats.
+        // forge installer profiles use the legacy jvmArguments format with ${…} placeholders
+        // that must be resolved to actual paths before passing to java.
+        let jvm_args_raw = if let Some(ref a) = args {
+            if !a.jvm.is_empty() { a.jvm.clone() } else { profile.jvm_arguments }
+        } else {
+            profile.jvm_arguments
+        };
+        let version_name = match config.loader {
+            ModLoader::Forge => format!("{}-forge-{}", config.game_version, lv),
+            ModLoader::NeoForge => format!("neoforge-{}", lv),
+            _ => config.game_version.clone(),
+        };
+        // forge/neoforge installer puts its own libraries in the instance dir,
+        // not in the global meta dir. ${library_directory} must resolve there.
+        let library_directory = if matches!(config.loader, ModLoader::Forge | ModLoader::NeoForge) {
+            minecraft_dir.join("libraries").to_string_lossy().into_owned()
+        } else {
+            lib_dir.to_string_lossy().into_owned()
+        };
+        let cp_sep = if cfg!(windows) { ";" } else { ":" };
+        let jvm_args = resolve_jvm_placeholders(jvm_args_raw, &library_directory, cp_sep, &version_name);
         (main_class, game_args, jvm_args)
     } else {
         (meta.main_class.clone(), Vec::new(), Vec::new())
@@ -368,7 +425,8 @@ pub async fn launch(
 
     // forgebootstrap (forge 1.21+) needs an explicit launch target,
     // otherwise modlauncher may pass null to immediatewindowhandler.
-    if matches!(config.loader, ModLoader::Forge | ModLoader::NeoForge) {
+    // neoForge uses its own launch mechanism and doesn't need this.
+    if config.loader == ModLoader::Forge && is_game_version_at_least(&config.game_version, 1, 21) {
         // add at the front so ForgeBootstrap finds it before any game args
         game_args.insert(0, "forge_client".to_string());
         game_args.insert(0, "--launchTarget".to_string());
@@ -407,13 +465,15 @@ pub async fn launch(
     cmd.stdout(std::process::Stdio::piped());
     cmd.stderr(std::process::Stdio::piped());
 
-    // linux-only env cleanup for the child process:
-    //   - strip inherited LD_LIBRARY_PATH/LD_PRELOAD to avoid nvidia's
-    //     libegl segfaulting when lwjgl uses egl on wayland (prismlauncher
-    //     does the same in CleanEnviroment). users can set the
-    //     LAUNCHER_ variants to inject specific paths if needed.
-    //   - set GDK_BACKEND=x11 to avoid Forge early window (gtk) issues
-    //     under wayland.
+    // linux-only env setup for the child process.
+    //
+    // strip inherited LD_LIBRARY_PATH/LD_PRELOAD to avoid nvidia's libegl
+    // segfaulting when lwjgl uses egl (prismlauncher does the same in
+    // CleanEnvironment). users can set LAUNCHER_LD_LIBRARY_PATH /
+    // LAUNCHER_LD_PRELOAD to inject specific paths if needed.
+    //
+    // also force GDK_BACKEND=x11 when running under wayland with xwayland
+    // available, to avoid forge early-window (gtk) initialisation issues.
     #[cfg(target_os = "linux")]
     {
         let ld_path = std::env::var("LD_LIBRARY_PATH").ok();
@@ -440,7 +500,21 @@ pub async fn launch(
             _ => {}
         }
 
-        cmd.env("GDK_BACKEND", "x11");
+        // gdk defaults to wayland backend on wayland, but forge's early
+        // loading gtk window has issues with native wayland. force the
+        // X11 backend through xwayland when available.
+        //
+        // also unset WAYLAND_DISPLAY so glfw uses X11/XWayland instead of
+        // native wayland, which prevents "platform does not provide window
+        // position" crashes on some wayland compositors.
+        let is_wayland = std::env::var("XDG_SESSION_TYPE")
+            .map(|v| v == "wayland")
+            .unwrap_or(false)
+            || std::env::var("WAYLAND_DISPLAY").is_ok();
+        if is_wayland && std::env::var("DISPLAY").is_ok() {
+            cmd.env("GDK_BACKEND", "x11");
+            cmd.env_remove("WAYLAND_DISPLAY");
+        }
     }
 
     let mut child = match cmd.spawn() {
