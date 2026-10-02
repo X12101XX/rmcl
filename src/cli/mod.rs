@@ -13,9 +13,20 @@ mod utils;
 mod version;
 
 use clap::{Arg, ArgAction, ArgGroup, Command};
+use clap_complete::{Shell, generate};
 
 pub async fn init() {
     let matches = build_command().get_matches();
+
+    if let Some(completions) = matches.subcommand_matches("completions") {
+        let shell = *completions
+            .get_one::<Shell>("shell")
+            .expect("Shell is required");
+
+        let mut command = build_command();
+        generate(shell, &mut command, "rmcl", &mut std::io::stdout());
+        return;
+    }
 
     // no subcommand means the user just ran `rmcl` bare, so fall through to TUI mode
     if matches.subcommand().is_none() {
@@ -96,6 +107,15 @@ fn build_command() -> Command {
         .version(env!("CARGO_PKG_VERSION"))
         .subcommand_required(false)
         .arg_required_else_help(false)
+        .subcommand(
+            Command::new("completions")
+                .about("Generate shell completion script")
+                .arg(
+                    Arg::new("shell")
+                        .required(true)
+                        .value_parser(clap::value_parser!(Shell)),
+                ),
+        )
         .subcommand(
             Command::new("instance")
                 .about("Manage launcher instances")

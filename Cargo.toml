@@ -74,6 +74,7 @@ libcasr = "2.13"
 fs2 = "0.4"
 fastnbt = "2.6.2"
 flate2 = "1.1.9"
+clap_complete = "4.6.11"
 
 
 [profile.release]
